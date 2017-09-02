@@ -8,71 +8,76 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import static com.example.shashvatkedia.lock.ApplicationAdapter.con;
 import static com.example.shashvatkedia.lock.ApplicationAdapter.p;
-
-/**
- * Created by Shashvat Kedia on 01-09-2017.
- */
 
 public class DataBase extends SQLiteOpenHelper {
 
-    private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + Table.FeedEntry.TABLE_NAME + " (" +
-                    Table.FeedEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
-                    Table.FeedEntry.COLUMN_NAME_APPNAME + " TEXT," +
-                    Table.FeedEntry.COLUMN_NAME_PACKAGE + " TEXT," + Table.FeedEntry.COLUMN_NAME_SELECTED + "INTEGER)";
+    public static final int DATABASE_VERSION=1;
+    public static final String DATABASE_NAME="Apps.db";
+    public static PackageManager p;
+    public static final String CREATE_TABLE="CREATE TABLE "+ Table.FeedEntry.TABLE_NAME+
+            " ("+ Table.FeedEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
+            Table.FeedEntry.COLUMN_NAME_APPNAME+" TEXT,"+Table.FeedEntry.COLUMN_NAME_PACKAGE+" TEXT,"+
+            Table.FeedEntry.COLUMN_NAME_SELECTED+" INTEGER)";
+    public static final String DELETE_TABLE="DROP TABLE IF EXISTS"+Table.FeedEntry.TABLE_NAME;
 
-    private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + Table.FeedEntry.TABLE_NAME;
-
-    public static int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "AppData.db";
-    public PackageManager pm;
     public DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        pm=context.getPackageManager();
+        p=MainActivity.pm;
     }
+
     @Override
     public void onCreate(SQLiteDatabase data){
-        data.execSQL(SQL_CREATE_ENTRIES);
+        data.execSQL(CREATE_TABLE);
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase data,int oldVersion,int newVersion){
-        data.execSQL(SQL_DELETE_ENTRIES);
-        DATABASE_VERSION=newVersion;
+        data.execSQL(DELETE_TABLE);
         onCreate(data);
     }
 
-    public void addInfo(DataBase data,Row info){
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        onUpgrade(db, oldVersion, newVersion);
+    }
+
+    public static void insertInfo(Row row){
+        SQLiteDatabase data=ApplicationAdapter.data.getWritableDatabase();
+        ContentValues content=new ContentValues();
+        content.put(Table.FeedEntry.COLUMN_NAME_APPNAME,row.getInfo().loadLabel(p).toString());
+        content.put(Table.FeedEntry.COLUMN_NAME_PACKAGE,row.getInfo().packageName);
         int temp;
-        SQLiteDatabase db=data.getWritableDatabase();
-        ContentValues values=new ContentValues();
-        values.put(Table.FeedEntry.COLUMN_NAME_APPNAME,info.getInfo().loadLabel(pm).toString());
-        values.put(Table.FeedEntry.COLUMN_NAME_PACKAGE,info.getInfo().packageName);
-        if(info.isSelected()){
+        if(row.isSelected()){
             temp=1;
         }
         else{
             temp=0;
         }
-        values.put(Table.FeedEntry.COLUMN_NAME_SELECTED,temp);
-        db.insert(Table.FeedEntry.TABLE_NAME,null,values);
+        content.put(Table.FeedEntry.COLUMN_NAME_SELECTED,temp);
+        data.insert(Table.FeedEntry.TABLE_NAME,null,content);
     }
 
-    public int findInfo(DataBase data,String pack){
-        SQLiteDatabase db=data.getReadableDatabase();
-        String project[]={
-                Table.FeedEntry.COLUMN_NAME_SELECTED
-        };
-        String select=Table.FeedEntry.COLUMN_NAME_PACKAGE + "=?";
-        String selectionArgs[] = {pack};
-        Cursor cursor = db.query(Table.FeedEntry.TABLE_NAME,project,select,selectionArgs,null,null,null);
+    public static int findInfo(String package_name){
+        SQLiteDatabase data=ApplicationAdapter.data.getReadableDatabase();
+        String[] columns={Table.FeedEntry.COLUMN_NAME_APPNAME,Table.FeedEntry.COLUMN_NAME_PACKAGE,Table.FeedEntry.COLUMN_NAME_SELECTED};
+        String basis=Table.FeedEntry.COLUMN_NAME_PACKAGE+" = ?";
+        String[] attri={package_name};
+        Cursor cursor=data.query(Table.FeedEntry.TABLE_NAME,columns,basis,attri,null,null,null);
         if(cursor!=null){
             return 1;
         }
         else{
             return 0;
         }
+    }
+
+    public static void deleteInfo(String package_name){
+        SQLiteDatabase data=ApplicationAdapter.data.getWritableDatabase();
+        String condi = Table.FeedEntry.COLUMN_NAME_PACKAGE + " LIKE ?";
+        String attri[]={package_name};
+        data.delete(Table.FeedEntry.TABLE_NAME,condi,attri);
     }
 }
 
