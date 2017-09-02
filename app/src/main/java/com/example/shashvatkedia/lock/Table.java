@@ -15,5 +15,4 @@ public class Table {
             public static final String COLUMN_NAME_PACKAGE = "AppPackage";
             public static final String COLUMN_NAME_SELECTED = "Checked_State";
         }
-    }
 }
