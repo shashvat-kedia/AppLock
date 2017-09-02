@@ -45,26 +45,16 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
         list=info;
         p=a.getPackageManager();
     }
-    static DataBase data=new DataBase(con);
     ViewHolder hold=null;
     @Override
     public View getView(int position,View convertView, ViewGroup parent){
-        int val=data.findInfo(data,list.get(position).getInfo().packageName);
         if(convertView==null){
             convertView= LayoutInflater.from(getContext()).inflate(R.layout.appsdisplay,parent,false);
             hold=new ViewHolder();
-            hold.checked_state=(CheckBox)convertView.findViewById(R.id.selected_state);
-            hold.name=(TextView)convertView.findViewById(R.id.AppName);
-            hold.icon=(ImageView)convertView.findViewById(R.id.icon1);
-            hold.packg= (TextView)convertView.findViewById(R.id.package_name);
-            if(val==1){
-                hold.checked_state.setChecked(true);
-                list.get(position).setSelected(true);
-            }
-            else{
-                hold.checked_state.setChecked(false);
-                list.get(position).setSelected(false);
-            }
+            hold.checked_state=convertView.findViewById(R.id.selected_state);
+            hold.name=convertView.findViewById(R.id.AppName);
+            hold.icon=convertView.findViewById(R.id.icon1);
+            hold.packg=convertView.findViewById(R.id.package_name);
             hold.checked_state.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean b) {
@@ -93,14 +83,6 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
         catch(PackageManager.NameNotFoundException e) {
             Log.e("#", "NameNotFound Error");
         }
-        if(val==1){
-                hold.checked_state.setChecked(true);
-                list.get(position).setSelected(true);
-            }
-            else{
-                hold.checked_state.setChecked(false);
-                list.get(position).setSelected(false);
-            }
         hold.checked_state.setChecked(list.get(position).isSelected());
         return convertView;
     }
