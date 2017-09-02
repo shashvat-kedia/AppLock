@@ -30,10 +30,6 @@ import static android.R.attr.id;
 import static android.media.MediaFormat.KEY_HEIGHT;
 import static android.provider.Contacts.SettingsColumns.KEY;
 
-/**
- * Created by Shashvat Kedia on 27-08-2017.
- */
-
 public class ApplicationAdapter extends ArrayAdapter<Row> {
     static PackageManager p;
     static Context con;
@@ -45,9 +41,11 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
         list=info;
         p=a.getPackageManager();
     }
+    public static DataBase data=new DataBase(con);
     ViewHolder hold=null;
     @Override
     public View getView(int position,View convertView, ViewGroup parent){
+        int val=DataBase.findInfo(list.get(position).getInfo().packageName);
         if(convertView==null){
             convertView= LayoutInflater.from(getContext()).inflate(R.layout.appsdisplay,parent,false);
             hold=new ViewHolder();
@@ -55,6 +53,14 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
             hold.name=convertView.findViewById(R.id.AppName);
             hold.icon=convertView.findViewById(R.id.icon1);
             hold.packg=convertView.findViewById(R.id.package_name);
+            if(val==1){
+                hold.checked_state.setSelected(true);
+                list.get(position).setSelected(true);
+            }
+            else{
+                hold.checked_state.setSelected(false);
+                list.get(position).setSelected(false);
+            }
             hold.checked_state.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean b) {
@@ -82,6 +88,14 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
         }
         catch(PackageManager.NameNotFoundException e) {
             Log.e("#", "NameNotFound Error");
+        }
+        if(val==1){
+            hold.checked_state.setSelected(true);
+            list.get(position).setSelected(true);
+        }
+        else{
+            hold.checked_state.setSelected(false);
+            list.get(position).setSelected(false);
         }
         hold.checked_state.setChecked(list.get(position).isSelected());
         return convertView;
