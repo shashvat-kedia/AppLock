@@ -1,5 +1,6 @@
 package com.example.shashvatkedia.lock;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -22,12 +23,10 @@ import static com.example.shashvatkedia.lock.ApplicationAdapter.p;
 public class MainActivity extends AppCompatActivity{
     static ArrayList<Row> locked=new ArrayList<Row>(0);
     ArrayList<Row> packages = new ArrayList<Row>();
-    final DataBase data=new DataBase(MainActivity.this,p);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        data.onCreate(q);
         final PackageManager pm = getPackageManager();
         List<ApplicationInfo> installedApps = pm.getInstalledApplications(0);
         for (ApplicationInfo info : installedApps) {
@@ -42,12 +41,14 @@ public class MainActivity extends AppCompatActivity{
         ListView screen = (ListView) findViewById(R.id.activity_main);
         screen.setAdapter(info);
         Button save = (Button) findViewById(R.id.lock_button);
-        save.setOnClickListener(new View.OnClickListener() {
+        save.setOnClickListener(
+                new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ApplicationAdapter.data.onUpgrade(ApplicationAdapter.data.getWritableDatabase(),DataBase.DATABASE_VERSION,DataBase.DATABASE_VERSION+1);
                 for (Row in : packages) {
                     if (in.isSelected() && in.isScanned() == 0) {
-                        data.addRow(in);
+                        ApplicationAdapter.data.addInfo(ApplicationAdapter.data,in);
                         in.scan = 1;
                     } else if (in.isSelected() == false) {
                         in.scan = 0;

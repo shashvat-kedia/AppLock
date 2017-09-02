@@ -7,61 +7,70 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import static com.example.shashvatkedia.lock.ApplicationAdapter.p;
+
 /**
  * Created by Shashvat Kedia on 01-09-2017.
  */
 
 public class DataBase extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "Locked_Apps";
-    private static final String TABLE_NAME = "Apps";
-    private final static String KEY_ID = "id";
-    private static final String App = "ApplicationName";
-    private static final String pack = "ApplicationPackageName"
-    private static final String Selected = "CHECKBOX_STATE";
-    PackageManager p;
-    public DataBase(Context context, PackageManager pm) {
+
+    private static final String SQL_CREATE_ENTRIES =
+            "CREATE TABLE " + Table.FeedEntry.TABLE_NAME + " (" +
+                    Table.FeedEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                    Table.FeedEntry.COLUMN_NAME_APPNAME + " TEXT," +
+                    Table.FeedEntry.COLUMN_NAME_PACKAGE + " TEXT," + Table.FeedEntry.COLUMN_NAME_SELECTED + "INTEGER)";
+
+    private static final String SQL_DELETE_ENTRIES =
+            "DROP TABLE IF EXISTS " + Table.FeedEntry.TABLE_NAME;
+
+    public static int DATABASE_VERSION = 1;
+    public static final String DATABASE_NAME = "AppData.db";
+    public PackageManager pm;
+    public DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        p = pm;
+        pm=context.getPackageManager();
     }
-
     @Override
-    public void onCreate(SQLiteDatabase data) {
-        String CREATION_TABLE = "CREATE TABLE Apps ( "
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT, " + "ApplicationName TEXT, "
-                + "ApplicationPackageName TEXT, " + "CHECKBOX_STATE INTEGER )";
-        data.execSQL(CREATION_TABLE);
+    public void onCreate(SQLiteDatabase data){
+        data.execSQL(SQL_CREATE_ENTRIES);
     }
-
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        this.onCreate(db);
+    public void onUpgrade(SQLiteDatabase data,int oldVersion,int newVersion){
+        data.execSQL(SQL_DELETE_ENTRIES);
+        DATABASE_VERSION=newVersion;
+        onCreate(data);
     }
 
-    public void addRow(Row row) {
+    public void addInfo(DataBase data,Row info){
         int temp;
-        SQLiteDatabase data = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(App, row.getInfo().loadLabel(p).toString());
-        values.put(pack, row.getInfo().packageName);
-        if (row.isSelected() == true) {
-            temp = 1;
-        } else {
-            temp = 0;
+        SQLiteDatabase db=data.getWritableDatabase();
+        ContentValues values=new ContentValues();
+        values.put(Table.FeedEntry.COLUMN_NAME_APPNAME,info.getInfo().loadLabel(pm).toString());
+        values.put(Table.FeedEntry.COLUMN_NAME_PACKAGE,info.getInfo().packageName);
+        if(info.isSelected()){
+            temp=1;
         }
-        values.put(Selected, temp);
-        data.insert(TABLE_NAME, null, values);
-        data.close();
+        else{
+            temp=0;
+        }
+        values.put(Table.FeedEntry.COLUMN_NAME_SELECTED,temp);
+        db.insert(Table.FeedEntry.TABLE_NAME,null,values);
     }
 
-    public int getApp(String name) {
-        SQLiteDatabase data = this.getReadableDatabase();
-        String query = "select * from " + TABLE_NAME + " where " + App + " = '" + name + "'";
-        Cursor cur = data.rawQuery(query, null);
-        if (cur != null) {
+    public int findInfo(DataBase data,String pack){
+        SQLiteDatabase db=data.getReadableDatabase();
+        String project[]={
+                Table.FeedEntry.COLUMN_NAME_SELECTED
+        };
+        String select=Table.FeedEntry.COLUMN_NAME_PACKAGE + "=?";
+        String selectionArgs[] = {pack};
+        Cursor cursor = db.query(Table.FeedEntry.TABLE_NAME,project,select,selectionArgs,null,null,null);
+        if(cursor!=null){
             return 1;
-        } else {
+        }
+        else{
             return 0;
         }
     }

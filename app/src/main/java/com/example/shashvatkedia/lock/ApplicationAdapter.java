@@ -45,6 +45,7 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
         list=info;
         p=a.getPackageManager();
     }
+    static DataBase data=new DataBase(con);
     ViewHolder hold=null;
     @Override
     public View getView(int position,View convertView, ViewGroup parent){
@@ -55,10 +56,14 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
             hold.name=(TextView)convertView.findViewById(R.id.AppName);
             hold.icon=(ImageView)convertView.findViewById(R.id.icon1);
             hold.packg= (TextView)convertView.findViewById(R.id.package_name);
-            int val=MainActivity.data.getApp(list.get(position).getInfo().loadLabel(p).toString());
+            int val=data.findInfo(data,list.get(position).getInfo().packageName);
             if(val==1){
                 hold.checked_state.setChecked(true);
                 list.get(position).setSelected(true);
+            }
+            else{
+                hold.checked_state.setChecked(false);
+                list.get(position).setSelected(false);
             }
             hold.checked_state.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
                 @Override
