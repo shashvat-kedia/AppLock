@@ -19,15 +19,17 @@ import java.util.List;
 import static android.R.attr.data;
 import static com.example.shashvatkedia.lock.ApplicationAdapter.con;
 import static com.example.shashvatkedia.lock.ApplicationAdapter.p;
+import static com.example.shashvatkedia.lock.DataBase.findInfo;
 
 public class MainActivity extends AppCompatActivity{
     static ArrayList<Row> locked=new ArrayList<Row>(0);
     ArrayList<Row> packages = new ArrayList<Row>();
+    public static PackageManager pm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final PackageManager pm = getPackageManager();
+        pm = getPackageManager();
         List<ApplicationInfo> installedApps = pm.getInstalledApplications(0);
         for (ApplicationInfo info : installedApps) {
             if ((info.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
@@ -48,8 +50,15 @@ public class MainActivity extends AppCompatActivity{
                 for (Row in : packages) {
                     if (in.isSelected() && in.isScanned() == 0) {
                         in.scan = 1;
-                    } else if (in.isSelected() == false) {
+                        if(DataBase.findInfo(in.getInfo().packageName)==0){
+                            DataBase.insertInfo(in);
+                        }
+                    }
+                    else if (in.isSelected() == false) {
                         in.scan = 0;
+                        if(DataBase.findInfo(in.getInfo().packageName)==1){
+                            DataBase.deleteInfo(in.getInfo().packageName);
+                        }
                     }
                 }
                 Intent lock = new Intent(getApplicationContext(), LockActivity.class);
