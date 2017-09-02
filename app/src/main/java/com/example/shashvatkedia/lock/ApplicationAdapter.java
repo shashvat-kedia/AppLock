@@ -49,6 +49,7 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
     ViewHolder hold=null;
     @Override
     public View getView(int position,View convertView, ViewGroup parent){
+        int val=data.findInfo(data,list.get(position).getInfo().packageName);
         if(convertView==null){
             convertView= LayoutInflater.from(getContext()).inflate(R.layout.appsdisplay,parent,false);
             hold=new ViewHolder();
@@ -56,7 +57,6 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
             hold.name=(TextView)convertView.findViewById(R.id.AppName);
             hold.icon=(ImageView)convertView.findViewById(R.id.icon1);
             hold.packg= (TextView)convertView.findViewById(R.id.package_name);
-            int val=data.findInfo(data,list.get(position).getInfo().packageName);
             if(val==1){
                 hold.checked_state.setChecked(true);
                 list.get(position).setSelected(true);
@@ -93,7 +93,14 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
         catch(PackageManager.NameNotFoundException e) {
             Log.e("#", "NameNotFound Error");
         }
-
+        if(val==1){
+                hold.checked_state.setChecked(true);
+                list.get(position).setSelected(true);
+            }
+            else{
+                hold.checked_state.setChecked(false);
+                list.get(position).setSelected(false);
+            }
         hold.checked_state.setChecked(list.get(position).isSelected());
         return convertView;
     }
