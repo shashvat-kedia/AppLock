@@ -45,10 +45,8 @@ public class MainActivity extends AppCompatActivity{
                 new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ApplicationAdapter.data.onUpgrade(ApplicationAdapter.data.getWritableDatabase(),DataBase.DATABASE_VERSION,DataBase.DATABASE_VERSION+1);
                 for (Row in : packages) {
                     if (in.isSelected() && in.isScanned() == 0) {
-                        ApplicationAdapter.data.addInfo(ApplicationAdapter.data,in);
                         in.scan = 1;
                     } else if (in.isSelected() == false) {
                         in.scan = 0;
