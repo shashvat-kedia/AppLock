@@ -6,16 +6,18 @@
     android:layout_height="match_parent"
     tools:context="com.example.shashvatkedia.lock.MainActivity">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/activity_main"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:Text="Lock"
+        android:id="@+id/lock_button"
+        />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="Lock"
-        android:id="@+id/lock_button"/>
+        android:text="unlock"
+        android:id="@+id/unlock_button"
+        />
 
 </RelativeLayout>
