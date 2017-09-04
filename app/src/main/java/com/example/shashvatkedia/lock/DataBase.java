@@ -6,13 +6,19 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.ContactsContract;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static com.example.shashvatkedia.lock.ApplicationAdapter.con;
 import static com.example.shashvatkedia.lock.ApplicationAdapter.p;
+import static com.example.shashvatkedia.lock.AppsDisplay.pm;
+
+/**
+ * Created by Shashvat Kedia on 01-09-2017.
+ */
 
 public class DataBase extends SQLiteOpenHelper {
-
+    private static DataBase sInstance=null;
     public static final int DATABASE_VERSION=1;
     public static final String DATABASE_NAME="Apps.db";
     public static PackageManager p;
@@ -22,9 +28,16 @@ public class DataBase extends SQLiteOpenHelper {
             Table.FeedEntry.COLUMN_NAME_SELECTED+" INTEGER)";
     public static final String DELETE_TABLE="DROP TABLE IF EXISTS"+Table.FeedEntry.TABLE_NAME;
 
-    public DataBase(Context context) {
+    public static synchronized DataBase getInstance(Context con){
+        if(sInstance==null){
+            sInstance=new DataBase(con.getApplicationContext());
+        }
+        return sInstance;
+    }
+
+    private DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        p=MainActivity.pm;
+        p=AppsDisplay.pm;
     }
 
     @Override
@@ -43,8 +56,8 @@ public class DataBase extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public static void insertInfo(Row row){
-        SQLiteDatabase data=ApplicationAdapter.data.getWritableDatabase();
+    public void insertInfo(Row row){
+        SQLiteDatabase data=this.getWritableDatabase();
         ContentValues content=new ContentValues();
         content.put(Table.FeedEntry.COLUMN_NAME_APPNAME,row.getInfo().loadLabel(p).toString());
         content.put(Table.FeedEntry.COLUMN_NAME_PACKAGE,row.getInfo().packageName);
@@ -59,8 +72,8 @@ public class DataBase extends SQLiteOpenHelper {
         data.insert(Table.FeedEntry.TABLE_NAME,null,content);
     }
 
-    public static int findInfo(String package_name){
-        SQLiteDatabase data=ApplicationAdapter.data.getReadableDatabase();
+    public int findInfo(String package_name){
+        SQLiteDatabase data=this.getReadableDatabase();
         String[] columns={Table.FeedEntry.COLUMN_NAME_APPNAME,Table.FeedEntry.COLUMN_NAME_PACKAGE,Table.FeedEntry.COLUMN_NAME_SELECTED};
         String basis=Table.FeedEntry.COLUMN_NAME_PACKAGE+" = ?";
         String[] attri={package_name};
@@ -73,8 +86,8 @@ public class DataBase extends SQLiteOpenHelper {
         }
     }
 
-    public static void deleteInfo(String package_name){
-        SQLiteDatabase data=ApplicationAdapter.data.getWritableDatabase();
+    public void deleteInfo(String package_name){
+        SQLiteDatabase data=this.getWritableDatabase();
         String condi = Table.FeedEntry.COLUMN_NAME_PACKAGE + " LIKE ?";
         String attri[]={package_name};
         data.delete(Table.FeedEntry.TABLE_NAME,condi,attri);
