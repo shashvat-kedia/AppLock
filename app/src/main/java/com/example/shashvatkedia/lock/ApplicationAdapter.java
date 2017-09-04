@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.drawable.Drawable;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -29,6 +30,11 @@ import static android.R.attr.data;
 import static android.R.attr.id;
 import static android.media.MediaFormat.KEY_HEIGHT;
 import static android.provider.Contacts.SettingsColumns.KEY;
+//import static com.example.shashvatkedia.lock.DataBase.findInfo;
+
+/**
+ * Created by Shashvat Kedia on 27-08-2017.
+ */
 
 public class ApplicationAdapter extends ArrayAdapter<Row> {
     static PackageManager p;
@@ -41,11 +47,11 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
         list=info;
         p=a.getPackageManager();
     }
-    public static DataBase data=new DataBase(con);
+    DataBase data=DataBase.getInstance(con);
     ViewHolder hold=null;
     @Override
     public View getView(int position,View convertView, ViewGroup parent){
-        int val=DataBase.findInfo(list.get(position).getInfo().packageName);
+        int vel=data.findInfo(getItem(position).getInfo().packageName);
         if(convertView==null){
             convertView= LayoutInflater.from(getContext()).inflate(R.layout.appsdisplay,parent,false);
             hold=new ViewHolder();
@@ -53,7 +59,7 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
             hold.name=convertView.findViewById(R.id.AppName);
             hold.icon=convertView.findViewById(R.id.icon1);
             hold.packg=convertView.findViewById(R.id.package_name);
-            if(val==1){
+            if(vel==1){
                 hold.checked_state.setSelected(true);
                 list.get(position).setSelected(true);
             }
@@ -89,7 +95,7 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
         catch(PackageManager.NameNotFoundException e) {
             Log.e("#", "NameNotFound Error");
         }
-        if(val==1){
+        if(vel==1){
             hold.checked_state.setSelected(true);
             list.get(position).setSelected(true);
         }
