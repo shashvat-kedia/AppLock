@@ -1,68 +1,32 @@
 package com.example.shashvatkedia.lock;
 
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.R.attr.data;
-import static com.example.shashvatkedia.lock.ApplicationAdapter.con;
-import static com.example.shashvatkedia.lock.ApplicationAdapter.p;
-import static com.example.shashvatkedia.lock.DataBase.findInfo;
 
 public class MainActivity extends AppCompatActivity{
-    static ArrayList<Row> locked=new ArrayList<Row>(0);
-    ArrayList<Row> packages = new ArrayList<Row>();
-    public static PackageManager pm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pm = getPackageManager();
-        List<ApplicationInfo> installedApps = pm.getInstalledApplications(0);
-        for (ApplicationInfo info : installedApps) {
-            if ((info.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
-                continue;
-            } else {
-                Row r = new Row(info, 0);
-                packages.add(r);
-            }
-        }
-        ApplicationAdapter info = new ApplicationAdapter(this, packages, pm);
-        ListView screen = (ListView) findViewById(R.id.activity_main);
-        screen.setAdapter(info);
-        Button save = (Button) findViewById(R.id.lock_button);
-        save.setOnClickListener(
-                new View.OnClickListener() {
+        Button lock=(Button) findViewById(R.id.lock_button);
+        Button unlock=(Button) findViewById(R.id.unlock_button);
+        lock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (Row in : packages) {
-                    if (in.isSelected() && in.isScanned() == 0) {
-                        in.scan = 1;
-                        if(DataBase.findInfo(in.getInfo().packageName)==0){
-                            DataBase.insertInfo(in);
-                        }
-                    }
-                    else if (in.isSelected() == false) {
-                        in.scan = 0;
-                        if(DataBase.findInfo(in.getInfo().packageName)==1){
-                            DataBase.deleteInfo(in.getInfo().packageName);
-                        }
-                    }
-                }
-                Intent lock = new Intent(getApplicationContext(), LockActivity.class);
-                startActivity(lock);
+                Intent i=new Intent(MainActivity.this,AppsDisplay.class);
+                startActivity(i);
+            }
+        });
+        unlock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Unlock un=new Unlock(MainActivity.this);
+                un.unlock();
             }
         });
     }
