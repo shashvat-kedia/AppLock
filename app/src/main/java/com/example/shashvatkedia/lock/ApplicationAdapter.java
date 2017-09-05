@@ -36,11 +36,10 @@ import static android.provider.Contacts.SettingsColumns.KEY;
  * Created by Shashvat Kedia on 27-08-2017.
  */
 
-public class ApplicationAdapter extends ArrayAdapter<Row> {
+public class  ApplicationAdapter extends ArrayAdapter<Row> {
     static PackageManager p;
     static Context con;
-    ArrayList<Row> selected_apps=new ArrayList<Row>();
-    ArrayList<Row> list=new ArrayList<Row>();
+    ArrayList<Row> selected_apps=new ArrayList<Row>();ArrayList<Row> list=new ArrayList<Row>();
     public ApplicationAdapter(Context a, ArrayList<Row> info, PackageManager pm){
         super(a,0,info);
         con=a;
@@ -51,7 +50,7 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
     ViewHolder hold=null;
     @Override
     public View getView(int position,View convertView, ViewGroup parent){
-        int vel=data.findInfo(getItem(position).getInfo().packageName);
+        final int vel=data.findInfo(getItem(position).getInfo().packageName);
         if(convertView==null){
             convertView= LayoutInflater.from(getContext()).inflate(R.layout.appsdisplay,parent,false);
             hold=new ViewHolder();
@@ -59,20 +58,20 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
             hold.name=convertView.findViewById(R.id.AppName);
             hold.icon=convertView.findViewById(R.id.icon1);
             hold.packg=convertView.findViewById(R.id.package_name);
-            if(vel==1){
-                hold.checked_state.setSelected(true);
-                list.get(position).setSelected(true);
-            }
-            else{
-                hold.checked_state.setSelected(false);
-                list.get(position).setSelected(false);
-            }
             hold.checked_state.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean b) {
                     int getPosition=(Integer)buttonView.getTag();
                     buttonView.setSelected(buttonView.isChecked());
                     list.get(getPosition).setSelected(buttonView.isChecked());
+                    if(vel==1){
+                        hold.checked_state.setSelected(true);
+                        list.get(getPosition).setSelected(true);
+                    }
+                    else{
+                        hold.checked_state.setSelected(false);
+                        list.get(getPosition).setSelected(false);
+                    }
                 }
             });
             convertView.setTag(hold);
@@ -94,14 +93,6 @@ public class ApplicationAdapter extends ArrayAdapter<Row> {
         }
         catch(PackageManager.NameNotFoundException e) {
             Log.e("#", "NameNotFound Error");
-        }
-        if(vel==1){
-            hold.checked_state.setSelected(true);
-            list.get(position).setSelected(true);
-        }
-        else{
-            hold.checked_state.setSelected(false);
-            list.get(position).setSelected(false);
         }
         hold.checked_state.setChecked(list.get(position).isSelected());
         return convertView;

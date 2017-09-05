@@ -18,7 +18,7 @@ import static com.example.shashvatkedia.lock.AppsDisplay.pm;
  */
 
 public class DataBase extends SQLiteOpenHelper {
-    private static DataBase sInstance=null;
+    public static DataBase sInstance=null;
     public static final int DATABASE_VERSION=1;
     public static final String DATABASE_NAME="Apps.db";
     public static PackageManager p;

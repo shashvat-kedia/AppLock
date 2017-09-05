@@ -46,21 +46,20 @@ public class AppsDisplay extends AppCompatActivity {
                         for (Row in : packages) {
                             if (in.isSelected() && in.isScanned() == 0) {
                                 in.scan = 1;
-                                if(data.findInfo(in.getInfo().packageName)==0){
-                                    data.insertInfo(in);
-
-                                }
+                             if(data.findInfo(in.getInfo().packageName)==0){
+                                   data.insertInfo(in);
+                                 }
                             }
                             else if (in.isSelected() == false) {
                                 in.scan = 0;
-                                if(data.findInfo(in.getInfo().packageName)==1){
-                                    data.deleteInfo(in.getInfo().packageName);
-                                }
+                              if(data.findInfo(in.getInfo().packageName)==1){
+                                   data.deleteInfo(in.getInfo().packageName);
+                               }
                             }
                         }
                         for(Row imp : packages){
-                            if(imp.getInfo().packageName=="com.example.shashvatkedia.lock"){
-                                data.insertInfo(imp);
+                           if(imp.getInfo().packageName=="com.example.shashvatkedia.lock"){
+                               data.insertInfo(imp);
                             }
                         }
                         Intent lock = new Intent(getApplicationContext(), LockActivity.class);

@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:text="unlock"
         android:layout_below="@id/lock_button"
+
         android:id="@+id/unlock_button"
         />
 
