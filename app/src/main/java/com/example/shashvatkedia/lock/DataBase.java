@@ -92,9 +92,19 @@ public class DataBase extends SQLiteOpenHelper {
         if(cursor!=null){
             return 1;
         }
-        else{
-            return 0;
+        return 0;
+    }
+
+    public int findPass(String password){
+        SQLiteDatabase data=this.getReadableDatabase();
+        String[] column={Table.FeedEntry.PASSWORD_FIELD};
+        String basis=Table.FeedEntry.PASSWORD_FIELD+" = ?";
+        String[] attri={password};
+        Cursor cur=data.query(Table.FeedEntry.TABLE_PASSWORD,column,basis,attri,null,null,null);
+        if(cur!=null){
+            return 1;
         }
+        return 0;
     }
 
     public void deleteInfo(String package_name){
