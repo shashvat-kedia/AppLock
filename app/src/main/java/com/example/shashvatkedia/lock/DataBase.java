@@ -27,6 +27,8 @@ public class DataBase extends SQLiteOpenHelper {
             Table.FeedEntry.COLUMN_NAME_APPNAME+" TEXT,"+Table.FeedEntry.COLUMN_NAME_PACKAGE+" TEXT,"+
             Table.FeedEntry.COLUMN_NAME_SELECTED+" INTEGER)";
     public static final String DELETE_TABLE="DROP TABLE IF EXISTS"+Table.FeedEntry.TABLE_NAME;
+    public static final String PASSWORD_TABLE=" CREATE TABLE "+Table.FeedEntry.TABLE_PASSWORD+" ("+Table.FeedEntry.PASSWORD_FIELD+" TEXT)";
+    public static final String DELETE_PASSWORD_FIELD="DROP TABLE IF EXISTS"+Table.FeedEntry.TABLE_PASSWORD;
 
     public static synchronized DataBase getInstance(Context con){
         if(sInstance==null){
@@ -43,11 +45,13 @@ public class DataBase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase data){
         data.execSQL(CREATE_TABLE);
+        data.execSQL(PASSWORD_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase data,int oldVersion,int newVersion){
         data.execSQL(DELETE_TABLE);
+        data.execSQL(DELETE_PASSWORD_FIELD);
         onCreate(data);
     }
 
@@ -70,6 +74,13 @@ public class DataBase extends SQLiteOpenHelper {
         }
         content.put(Table.FeedEntry.COLUMN_NAME_SELECTED,temp);
         data.insert(Table.FeedEntry.TABLE_NAME,null,content);
+    }
+
+    public void insertPass(String pass){
+        SQLiteDatabase data=this.getWritableDatabase();
+        ContentValues content=new ContentValues();
+        content.put(Table.FeedEntry.PASSWORD_FIELD,pass);
+        data.insert(Table.FeedEntry.TABLE_PASSWORD,null,content);
     }
 
     public int findInfo(String package_name){

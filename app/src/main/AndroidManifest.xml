@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".LockActivity" />
-        <activity android:name=".AppsDisplay"></activity>
+        <activity android:name=".AppsDisplay" />
+        <activity android:name=".UnlockActivity"></activity>
     </application>
 
 </manifest>

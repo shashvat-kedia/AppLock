@@ -19,5 +19,7 @@ public class LockActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lock);
         TextInputEditText pass=(TextInputEditText) findViewById(R.id.etPassword);
         String password=pass.getText().toString();
+        DataBase data=DataBase.getInstance(this);
+        data.insertPass(password);
     }
 }

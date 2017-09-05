@@ -10,8 +10,10 @@ public class Table {
         private Table() {}
         public static class FeedEntry implements BaseColumns {
             public static final String TABLE_NAME = "App";
+            public static final String TABLE_PASSWORD="Pass";
             public static final String COLUMN_NAME_APPNAME = "AppName";
             public static final String COLUMN_NAME_PACKAGE = "AppPackage";
             public static final String COLUMN_NAME_SELECTED = "Checked_State";
+            public static final String PASSWORD_FIELD="password";
         }
 }
