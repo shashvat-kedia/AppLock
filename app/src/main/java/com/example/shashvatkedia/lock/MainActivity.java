@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         Button lock=(Button) findViewById(R.id.lock_button);
         Button unlock=(Button) findViewById(R.id.unlock_button);
-        DataBase data=DataBase.getInstance(this);
+        DataBase data=DataBase.getInstance(this.getApplicationContext());
         lock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
